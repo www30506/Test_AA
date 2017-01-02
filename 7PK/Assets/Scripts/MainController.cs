@@ -52,4 +52,28 @@ public class MainController : MonoBehaviour {
 		#endif
 
 	}
+
+	public void OnBetBtn(){
+		if (status == StatusType.Working) return;
+
+		#if Clog
+		print ("----\t押注\t----");
+		#endif
+	}
+
+	public void OnOpenAllCardsBtn(){
+		if (status == StatusType.Working) return;
+
+		#if Clog
+		print ("----\t全開\t----");
+		#endif
+	}
+
+	public void OnOpenOneCardBtn(){
+		if (status == StatusType.Working) return;
+
+		#if Clog
+		print ("----\t開一張牌\t----");
+		#endif
+	}
 }

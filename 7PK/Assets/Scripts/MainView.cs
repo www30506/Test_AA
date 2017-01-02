@@ -7,7 +7,10 @@ public class MainView : MonoBehaviour {
 	[SerializeField]private Text bankMoenyText;
 	[SerializeField]private Text[] bounds;
 	[SerializeField]private Text[] boundsValue;
-
+	[SerializeField]private Text[] roundBetsText;
+	[SerializeField]private Text nowMoneyText;
+	[SerializeField]private Text UpMoneyText;
+		
 	void Start () {
 		
 	}
