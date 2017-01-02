@@ -7,6 +7,7 @@ public class MainController : MonoBehaviour {
 	private StatusType status =  StatusType.ReStart;
 	[SerializeField]private MainView mainView;
 	[SerializeField]private int totalBet;
+	[SerializeField]private PokerCard[] pokerCards;
 	private ZoneData zoneData;
 
 	void Start () {
@@ -16,6 +17,13 @@ public class MainController : MonoBehaviour {
 	void Update () {
 		if (Input.GetKeyUp (KeyCode.A)) {
 			OnOpenScoreBtn ();
+		}
+
+		if (Input.GetKeyUp (KeyCode.S)) {
+			for (int i = 0; i < pokerCards.Length; i++) {
+				pokerCards [i].SetData ("C_1");
+				pokerCards [i].Turn ();
+			}
 		}
 
 		#if UNITY_EDITOR
@@ -74,6 +82,14 @@ public class MainController : MonoBehaviour {
 
 		#if Clog
 		print ("----\t開一張牌\t----");
+		#endif
+	}
+
+	public void OnGetMoneyBtn(){
+		if (status == StatusType.Working) return;
+
+		#if Clog
+		print ("----\t取得金錢\t----");
 		#endif
 	}
 }
