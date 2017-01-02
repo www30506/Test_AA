@@ -11,7 +11,12 @@ public class MainController : MonoBehaviour {
 	private ZoneData zoneData;
 	[SerializeField]private UserData userData;
 
+
 	void Start () {
+		#if !Clog
+		Debug.logger.logEnabled = false;
+		#endif
+
 		zoneData = new ZoneData (1);
 		ResetGame ();
 	}
@@ -39,9 +44,7 @@ public class MainController : MonoBehaviour {
 	public void OnOpenScoreBtn(){
 		if (status == StatusType.Working) return;
 
-		#if Clog
 		print ("----\t開分\t----");
-		#endif
 
 		userData.bankMoney += zoneData.openScoreOfOne;
 		mainView.UpdateBankMoney (userData.bankMoney);
@@ -51,15 +54,11 @@ public class MainController : MonoBehaviour {
 		if (status == StatusType.Working) return;
 
 		if((userData.bankMoney >= 0 && userData.nowMoney <= zoneData.oneBetMoney) == false) {
-			#if Clog
 			print ("下分指令無效");
-			#endif
 			return;
 		}
 
-		#if Clog
 		print ("----\t下分\t----");
-		#endif
 
 		if (userData.bankMoney - zoneData.downScoreOfOne < 0) {
 			userData.nowMoney += (int)(userData.bankMoney + userData.bankMoney * (userData.bankMoney/(float)zoneData.downScoreOfOne));
@@ -77,19 +76,14 @@ public class MainController : MonoBehaviour {
 	public void OnUpScoreBtn(){
 		if (status == StatusType.Working) return;
 
-		#if Clog
 		print ("----\t上分\t----");
-		#endif
-
 	}
 
 	public void OnBetBtn(){
 		if (status == StatusType.Working) return;
 
 		if (((int)status <= 3) == false) {
-			#if Clog 
-			print ("指令無效"); 
-			#endif
+			print ("指令無效");
 			return;	
 		}
 
@@ -97,9 +91,7 @@ public class MainController : MonoBehaviour {
 	}
 
 	IEnumerator IE_Bet(){
-		#if Clog
 		print ("----\t押注\t----");
-		#endif
 
 		StatusType _preStatus = status;
 		status = StatusType.Working;
@@ -115,23 +107,17 @@ public class MainController : MonoBehaviour {
 	public void OnOpenAllCardsBtn(){
 		if (status == StatusType.Working) return;
 
-		#if Clog
 		print ("----\t全開\t----");
-		#endif
 	}
 
 	public void OnGetMoneyBtn(){
 		if (status == StatusType.Working) return;
 
-		#if Clog
 		print ("----\t取得金錢\t----");
-		#endif
 	}
 
 	private void ResetGame(){
-		#if Clog
 		print ("----\t重製遊戲\t----");
-		#endif
 
 		ResetAllPokerCards ();
 		ResetUserDataRoundBet ();
@@ -139,9 +125,7 @@ public class MainController : MonoBehaviour {
 	}
 
 	private void ResetAllPokerCards(){
-		#if Clog
 		print ("重製全部撲克卡");
-		#endif
 
 		for (int i = 0; i < pokerCards.Length; i++) {
 			pokerCards [i].Reset ();
@@ -149,9 +133,7 @@ public class MainController : MonoBehaviour {
 	}
 
 	private void ResetUserDataRoundBet(){
-		#if Clog
 		print ("重製玩家每輪押注金額");
-		#endif
 
 		for (int i = 0; i < userData.roundsBets.Length; i++) {
 			userData.roundsBets [i] = 0;
@@ -159,9 +141,7 @@ public class MainController : MonoBehaviour {
 	}
 
 	IEnumerator OpenOncePokerCard(StatusType p_nowStatus){
-		#if Clog
 		print ("開啟一次撲克牌");
-		#endif
 
 		switch ((int)p_nowStatus + 1) {
 		case (int) StatusType.OneRound:
