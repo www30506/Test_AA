@@ -21,6 +21,7 @@ public class PokerCard : MonoBehaviour {
 	}
 
 	public void SetData(string p_Value){
+		thisRawImage.enabled = true;
 		value = p_Value;
 		isTurn = false;
 		thisRawImage.texture = Resources.Load ("Textures/PokerCards/JR_0") as Texture;
@@ -33,6 +34,6 @@ public class PokerCard : MonoBehaviour {
 	}
 
 	public void Reset(){
-	
+		thisRawImage.enabled = false;
 	}
 }

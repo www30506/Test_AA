@@ -44,7 +44,7 @@ public class MainView : MonoBehaviour {
 		}
 	}
 
-	public void SetBankMoney(int p_bankMoneyValue){
+	public void UpdateBankMoney(int p_bankMoneyValue){
 		#if Clog
 		print("UI-更新銀行金錢");
 		#endif
@@ -52,12 +52,22 @@ public class MainView : MonoBehaviour {
 		bankMoenyText.text = p_bankMoneyValue.ToString ();
 	}
 
-	public void SetNowMaony(int p_nowMoneyValue){
+	public void UpdateNowMoney(int p_nowMoneyValue){
 		#if Clog
 		print ("UI-更新現有金錢");
 		#endif
 
 		nowMoneyText.text = p_nowMoneyValue.ToString ();
+	}
+
+	public void UpdateRoundBets(int[] p_roundBets){
+		#if Clog
+		print ("UI-更新每輪押注");
+		#endif
+
+		for (int i = 0; i < roundBetsText.Length; i++) {
+			roundBetsText [i].text = p_roundBets [i].ToString();
+		}
 	}
 }
 
