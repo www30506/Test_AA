@@ -53,7 +53,7 @@ public class MainView : MonoBehaviour {
 	}
 
 	public void UpdateRoundBets(int[] p_roundBets){
-		print ("UI-更新每輪押注");
+		print("UI-更新每輪押注");
 
 		for (int i = 0; i < roundBetsText.Length; i++) {
 			roundBetsText [i].text = p_roundBets [i].ToString();

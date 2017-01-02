@@ -6,6 +6,7 @@ using System;
 public class MainController : MonoBehaviour {
 	[SerializeField]private StatusType status =  StatusType.ReStart;
 	[SerializeField]private MainView mainView;
+	[SerializeField]private PokerCardSever sever;
 	[SerializeField]private int totalBet;
 	[SerializeField]private PokerCard[] pokerCards;
 	private ZoneData zoneData;
