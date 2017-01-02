@@ -9,6 +9,7 @@ public class MainController : MonoBehaviour {
 	[SerializeField]private int totalBet;
 	[SerializeField]private PokerCard[] pokerCards;
 	private ZoneData zoneData;
+	[SerializeField]private UserData userData;
 
 	void Start () {
 		zoneData = new ZoneData (1);
@@ -19,16 +20,13 @@ public class MainController : MonoBehaviour {
 			OnOpenScoreBtn ();
 		}
 
-		if (Input.GetKeyUp (KeyCode.S)) {
-			for (int i = 0; i < pokerCards.Length; i++) {
-				pokerCards [i].SetData ("C_1");
-				pokerCards [i].Turn ();
-			}
+		if(Input.GetKeyUp(KeyCode.S)){
+			OnDownScoreBtn();
 		}
 
 		#if UNITY_EDITOR
 		if(Input.GetKeyUp(KeyCode.P)){
-			print("User BankMoney : " + UserData.bankMoney);
+			print("User BankMoney : " + userData.bankMoney);
 		}
 		#endif
 	}
@@ -40,16 +38,35 @@ public class MainController : MonoBehaviour {
 		print ("----\t開分\t----");
 		#endif
 
-		UserData.bankMoney += zoneData.openScoreOfOne;
-		mainView.SetBankMoney (UserData.bankMoney);
+		userData.bankMoney += zoneData.openScoreOfOne;
+		mainView.SetBankMoney (userData.bankMoney);
 	}
 
 	public void OnDownScoreBtn(){
 		if (status == StatusType.Working) return;
 
+		if((userData.bankMoney >= 0 && userData.nowMoney <= zoneData.oneBetMoney) == false) {
+			#if Clog
+			print ("下分指令無效");
+			#endif
+			return;
+		}
+
 		#if Clog
 		print ("----\t下分\t----");
 		#endif
+
+		if (userData.bankMoney - zoneData.downScoreOfOne < 0) {
+			userData.nowMoney += (int)(userData.bankMoney + userData.bankMoney * (userData.bankMoney/(float)zoneData.downScoreOfOne));
+			userData.bankMoney -= userData.bankMoney;
+		} 
+		else {
+			userData.nowMoney += zoneData.downScoreOfOne + zoneData.downScoreBouns;
+			userData.bankMoney -= zoneData.downScoreOfOne;
+		}
+
+		mainView.SetBankMoney (userData.bankMoney);
+		mainView.SetNowMaony (userData.nowMoney);
 	}
 
 	public void OnUpScoreBtn(){

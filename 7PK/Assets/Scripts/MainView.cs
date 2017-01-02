@@ -46,9 +46,19 @@ public class MainView : MonoBehaviour {
 
 	public void SetBankMoney(int p_bankMoneyValue){
 		#if Clog
-		print("UI-設定銀行金錢");
+		print("UI-更新銀行金錢");
 		#endif
 
 		bankMoenyText.text = p_bankMoneyValue.ToString ();
 	}
+
+	public void SetNowMaony(int p_nowMoneyValue){
+		#if Clog
+		print ("UI-更新現有金錢");
+		#endif
+
+		nowMoneyText.text = p_nowMoneyValue.ToString ();
+	}
 }
+
+
