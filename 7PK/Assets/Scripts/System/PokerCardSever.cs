@@ -31,4 +31,8 @@ public class PokerCardSever : MonoBehaviour {
 		string[] _cardsValue = new string[1]{"C_1"};
 		return _cardsValue;
 	}
+
+	public bool IsWin(){
+		return false;
+	}
 }

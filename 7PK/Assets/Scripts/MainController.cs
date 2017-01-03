@@ -11,7 +11,7 @@ public class MainController : MonoBehaviour {
 	[SerializeField]private PokerCard[] pokerCards;
 	private ZoneData zoneData;
 	[SerializeField]private UserData userData;
-
+	[SerializeField]private bool thisGameLockBet = false;
 
 	void Start () {
 		#if !Clog
@@ -33,6 +33,10 @@ public class MainController : MonoBehaviour {
 
 		if (Input.GetKeyUp (KeyCode.D)) {
 			OnBetBtn ();
+		}
+
+		if(Input.GetKeyUp (KeyCode.F)) {
+			OnOpenAllCardsBtn ();
 		}
 
 		#if UNITY_EDITOR
@@ -81,11 +85,9 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void OnBetBtn(){
-		if (status == StatusType.Working) return;
-
-		if (((int)status <= 3) == false) {
+		if (status == StatusType.Working || userData.nowMoney <= 0 || ((int)status <= 3) == false || thisGameLockBet) {
 			print ("指令無效");
-			return;	
+			return;
 		}
 
 		StartCoroutine (IE_Bet ());
@@ -97,18 +99,73 @@ public class MainController : MonoBehaviour {
 		StatusType _preStatus = status;
 		status = StatusType.Working;
 
-		userData.roundsBets [(int)_preStatus] += zoneData.oneBetMoney;
+		int _betMoney = GetBetMoney ();
+		userData.nowMoney -= _betMoney;
+		userData.roundsBets [(int)_preStatus] += _betMoney;
+
 		mainView.UpdateRoundBets (userData.roundsBets);
+		mainView.UpdateNowMoney (userData.nowMoney);
+		mainView.UpdateBounsText (zoneData.magnification ,userData.totalBet);
 
 		yield return StartCoroutine(OpenOncePokerCard (_preStatus));
 
 		status = (StatusType)((int)++_preStatus);
+
+		if (status == StatusType.FourRound) {
+			yield return StartCoroutine(EnddingGame ());
+		}
+	}
+
+	private int GetBetMoney(){
+		int _betMoney = 0;
+		if (userData.nowMoney >= zoneData.oneBetMoney) {
+			_betMoney = zoneData.oneBetMoney;
+		} else {
+			_betMoney = userData.nowMoney;
+			thisGameLockBet = true;
+		}
+
+		return _betMoney;
+	}
+
+	IEnumerator EnddingGame(){
+		if (sever.IsWin ()) {
+			status = StatusType.Win;
+		} 
+		else {
+			status = StatusType.Lose;
+			yield return new WaitForSeconds (1.0f);
+			ResetGame ();
+		}
 	}
 
 	public void OnOpenAllCardsBtn(){
-		if (status == StatusType.Working) return;
+		if (status == StatusType.Working || isBet () == false) {
+			print ("指令無效");
+			return;
+		}
 
 		print ("----\t全開\t----");
+		StartCoroutine (IE_OpenAllCards ());
+	}
+
+	IEnumerator IE_OpenAllCards(){
+		StatusType _preStatus = status;
+		status = StatusType.Working;
+
+		int _OpenCardsCount = 4 -(int)_preStatus;
+
+		for (int i = 0; i < _OpenCardsCount; i++) {
+			yield return StartCoroutine(OpenOncePokerCard (_preStatus));
+
+			_preStatus = (StatusType)((int)++_preStatus);
+		}
+
+		yield return StartCoroutine(EnddingGame ());
+	}
+
+	private bool isBet(){
+		return userData.totalBet == 0 ? false : true;
 	}
 
 	public void OnGetMoneyBtn(){
@@ -122,6 +179,8 @@ public class MainController : MonoBehaviour {
 
 		ResetAllPokerCards ();
 		ResetUserDataRoundBet ();
+		mainView.UpdateRoundBets (userData.roundsBets);
+		thisGameLockBet = false;
 		status = StatusType.ReStart;
 	}
 
@@ -161,8 +220,6 @@ public class MainController : MonoBehaviour {
 	}
 
 	IEnumerator OpenRoundOneCards(){
-		print ("開啟第一輪的牌");
-
 		//播放音效
 
 		string[] _cardsValue = sever.GetRoundOneCards();
@@ -182,8 +239,6 @@ public class MainController : MonoBehaviour {
 	}
 
 	IEnumerator OpenRoundTwoCards(){
-		print ("開啟第二輪的牌");
-
 		string[] _cardsValue = sever.GetRoundOneCards();
 		//出第四張牌
 		pokerCards [3].SetData (_cardsValue [0]);
@@ -195,8 +250,6 @@ public class MainController : MonoBehaviour {
 	}
 
 	IEnumerator OpenRoundThreeCards(){
-		print ("開啟第三輪的牌");
-
 		string[] _cardsValue = sever.GetRoundOneCards();
 		//翻第六張牌
 		pokerCards [5].SetData (_cardsValue [0]);
@@ -205,8 +258,6 @@ public class MainController : MonoBehaviour {
 	}
 
 	IEnumerator OpenRoundFourCards(){
-		print ("開啟第四輪的牌");
-
 		string[] _cardsValue = sever.GetRoundOneCards();
 		//翻第七張牌
 		pokerCards [6].SetData (_cardsValue [0]);

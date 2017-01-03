@@ -27,7 +27,7 @@ public class MainView : MonoBehaviour {
 		}
 	}
 
-	public void SetBounsText(int[] p_magnification, int p_totalBet){
+	public void UpdateBounsText(int[] p_magnification, int p_totalBet){
 		print("UI-設定獎勵倍率");
 
 		if (p_totalBet < 1) {
