@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ZoneData {
 	public int[] magnification = new int[9]; //倍率 (依序為 同花大順 同花順...)
-	public int openScoreOfOne = 1000; //一次開多少分
+	public int openScoreOfOne = 1000	; //一次開多少分
 	public int downScoreOfOne = 500; //一次下多少分
 	public int downScoreBouns = 100; //下分時的額外贈分
 	public int upScore = 1000; //開分上限
