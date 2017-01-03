@@ -146,15 +146,79 @@ public class MainController : MonoBehaviour {
 
 		switch ((int)p_nowStatus + 1) {
 		case (int) StatusType.OneRound:
+			yield return StartCoroutine (OpenRoundOneCards ());
 			break;
 		case (int) StatusType.TwoRound:
+			yield return StartCoroutine (OpenRoundTwoCards ());
 			break;
 		case (int) StatusType.ThreeRound:
+			yield return StartCoroutine (OpenRoundThreeCards ());
 			break;
 		case (int) StatusType.FourRound:
+			yield return StartCoroutine (OpenRoundFourCards ());
 			break;
 		}
+	}
 
-		yield return new WaitForSeconds(3.0f);
+	IEnumerator OpenRoundOneCards(){
+		print ("開啟第一輪的牌");
+
+		//播放音效
+
+		string[] _cardsValue = sever.GetRoundOneCards();
+		//翻第一張牌
+		pokerCards [0].SetData (_cardsValue [0]);
+		pokerCards [0].Turn ();
+		yield return new WaitForSeconds (0.3f);
+
+		//出第二張牌
+		pokerCards [1].SetData (_cardsValue [1]);
+		yield return new WaitForSeconds (0.3f);
+
+		//翻第三張牌
+		pokerCards [2].SetData (_cardsValue [2]);
+		pokerCards [2].Turn ();
+		yield return new WaitForSeconds (0.3f);
+	}
+
+	IEnumerator OpenRoundTwoCards(){
+		print ("開啟第二輪的牌");
+
+		string[] _cardsValue = sever.GetRoundOneCards();
+		//出第四張牌
+		pokerCards [3].SetData (_cardsValue [0]);
+		yield return new WaitForSeconds (0.3f);
+		//翻第五張牌
+		pokerCards [4].SetData (_cardsValue [1]);
+		pokerCards [4].Turn ();
+		yield return new WaitForSeconds (0.3f);
+	}
+
+	IEnumerator OpenRoundThreeCards(){
+		print ("開啟第三輪的牌");
+
+		string[] _cardsValue = sever.GetRoundOneCards();
+		//翻第六張牌
+		pokerCards [5].SetData (_cardsValue [0]);
+		pokerCards [5].Turn ();
+		yield return new WaitForSeconds (0.3f);
+	}
+
+	IEnumerator OpenRoundFourCards(){
+		print ("開啟第四輪的牌");
+
+		string[] _cardsValue = sever.GetRoundOneCards();
+		//翻第七張牌
+		pokerCards [6].SetData (_cardsValue [0]);
+		pokerCards [6].Turn ();
+		yield return new WaitForSeconds (0.3f);
+
+		//翻第二張牌
+		pokerCards [1].Turn ();
+		yield return new WaitForSeconds (0.3f);
+
+		//翻第四張牌
+		pokerCards [3].Turn ();
+		yield return new WaitForSeconds (0.3f);
 	}
 }
