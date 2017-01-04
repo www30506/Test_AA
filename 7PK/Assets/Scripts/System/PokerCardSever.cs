@@ -112,9 +112,9 @@ public class PokerCardSever : MonoBehaviour {
 	
 		SetJudgmentSuitData (pokerSuit);
 
-		print ("牌行 : " + pokerSuit [0] + "," + pokerSuit [1] + "," + pokerSuit [2] + "," 
-			+ pokerSuit [3] + ","+ pokerSuit [4] + "," + pokerSuit [5] + "," + pokerSuit [6]);
-	
+//		print ("牌 : " + pokerSuit [0] + "," + pokerSuit [1] + "," + pokerSuit [2] + "," 
+//			+ pokerSuit [3] + ","+ pokerSuit [4] + "," + pokerSuit [5] + "," + pokerSuit [6]);
+
 		if (IsRoyalFlush ()) {
 			_suitType = SuitType.RoyalFlush;
 		} else if (IsFiveKind ()) {
@@ -136,15 +136,62 @@ public class PokerCardSever : MonoBehaviour {
 		} else {
 			_suitType = SuitType.Pair;
 		}
+//		print ("牌型 : " + _suitType.ToString());
 		return _suitType;
 	}
 		
 	private void SetJudgmentSuitData(List<string> p_pokerSuit){
 		for (int i = 0; i < p_pokerSuit.Count; i++) {
 			string[] _value = Regex.Split (p_pokerSuit [i], "_");
+			if (_value[0] == "JB" || _value[0] == "JR") {
+				suit_JokerCount++;
+			}
+			else{
+				SetSuitColorsData (_value[0]);
+				SetSuitNumbersData (_value [1]);
+				SetSuitCardsData (_value [0], _value [1]);
+			}
 		}
 	}
 
+	private void SetSuitColorsData(string p_color){
+		if (p_color == "C") {
+			suit_Colors [0]++;
+		}
+		else if (p_color == "D") {
+			suit_Colors [1]++;
+		}
+		else if (p_color == "H") {
+			suit_Colors [2]++;
+		}
+		else if (p_color == "S") {
+			suit_Colors [3]++;
+		}
+	}
+
+	private void SetSuitNumbersData(string p_number){
+		suit_Numbers[int.Parse(p_number)-1]++;
+	}
+
+	private void SetSuitCardsData(string p_color, string p_number){
+		int _colorNumber = 0;
+
+		if (p_color == "C") {
+			_colorNumber = 0;
+		}
+		else if (p_color == "D") {
+			_colorNumber = 1;
+		}
+		else if (p_color == "H") {
+			_colorNumber = 2;
+		}
+		else if (p_color == "S") {
+			_colorNumber = 3;
+		}
+
+		suit_cards [_colorNumber, int.Parse(p_number)] ++;
+	}
+		
 	private bool IsRoyalFlush(){
 		return false;
 	}
@@ -178,6 +225,26 @@ public class PokerCardSever : MonoBehaviour {
 	}
 
 	private bool IsTwoPair(){
-		return false;
+		int _pairCoung = 0;
+		bool _hasNumberMoreTen = false;
+
+		for (int i = 0; i < 13; i++) {
+			if (suit_Numbers [i] >= 2) {
+				_pairCoung++;
+				if (i == 0 || i > 8) {
+					_hasNumberMoreTen = true;
+				}
+			}
+		}
+
+		return (_pairCoung>=2 && _hasNumberMoreTen);
+	}
+
+	public SuitType TestSetPokerSuit(string p_cardsValue){
+		ClearJudgmentSuitData ();
+		string[] _cardsValue = Regex.Split(p_cardsValue,",");
+		pokerSuit = new List<string> (_cardsValue);
+
+		return GetSuitType ();
 	}
 }

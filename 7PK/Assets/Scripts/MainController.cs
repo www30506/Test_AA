@@ -13,7 +13,6 @@ public class MainController : MonoBehaviour {
 	[SerializeField]private UserData userData;
 	[SerializeField]private bool thisGameLockBet = false;
 
-
 	private float SendCardTime = 0.15f;
 
 	void Start () {
