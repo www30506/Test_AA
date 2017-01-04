@@ -13,6 +13,9 @@ public class MainController : MonoBehaviour {
 	[SerializeField]private UserData userData;
 	[SerializeField]private bool thisGameLockBet = false;
 
+
+	private float SendCardTime = 0.15f;
+
 	void Start () {
 		#if !Clog
 		Debug.logger.logEnabled = false;
@@ -37,6 +40,14 @@ public class MainController : MonoBehaviour {
 
 		if(Input.GetKeyUp (KeyCode.F)) {
 			OnOpenAllCardsBtn ();
+		}
+
+		if(Input.GetKeyUp (KeyCode.Z)) {
+			OnGetMoneyBtn ();
+		}
+
+		if(Input.GetKeyUp (KeyCode.B)) {
+			ResetGame ();
 		}
 
 		#if UNITY_EDITOR
@@ -129,13 +140,18 @@ public class MainController : MonoBehaviour {
 	}
 
 	IEnumerator EnddingGame(){
-		if (sever.IsWin ()) {
+		SuitType _suitType = sever.GetSuitType ();
+
+		//同花大順是0 高牌是10
+		if ((int)_suitType < (int)SuitType.Pair) {
 			status = StatusType.Win;
 		} 
 		else {
 			status = StatusType.Lose;
 			yield return new WaitForSeconds (1.0f);
+			#if !Test
 			ResetGame ();
+			#endif
 		}
 	}
 
@@ -177,9 +193,11 @@ public class MainController : MonoBehaviour {
 	private void ResetGame(){
 		print ("----\t重製遊戲\t----");
 
+		sever.ResetPokerDeck ();
 		ResetAllPokerCards ();
 		ResetUserDataRoundBet ();
 		mainView.UpdateRoundBets (userData.roundsBets);
+		mainView.ReSetBounsText ();
 		thisGameLockBet = false;
 		status = StatusType.ReStart;
 	}
@@ -226,50 +244,50 @@ public class MainController : MonoBehaviour {
 		//翻第一張牌
 		pokerCards [0].SetData (_cardsValue [0]);
 		pokerCards [0].Turn ();
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 
 		//出第二張牌
 		pokerCards [1].SetData (_cardsValue [1]);
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 
 		//翻第三張牌
 		pokerCards [2].SetData (_cardsValue [2]);
 		pokerCards [2].Turn ();
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 	}
 
 	IEnumerator OpenRoundTwoCards(){
-		string[] _cardsValue = sever.GetRoundOneCards();
+		string[] _cardsValue = sever.GetRoundTwoCards();
 		//出第四張牌
 		pokerCards [3].SetData (_cardsValue [0]);
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 		//翻第五張牌
 		pokerCards [4].SetData (_cardsValue [1]);
 		pokerCards [4].Turn ();
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 	}
 
 	IEnumerator OpenRoundThreeCards(){
-		string[] _cardsValue = sever.GetRoundOneCards();
+		string[] _cardsValue = sever.GetRoundThreeCards();
 		//翻第六張牌
 		pokerCards [5].SetData (_cardsValue [0]);
 		pokerCards [5].Turn ();
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 	}
 
 	IEnumerator OpenRoundFourCards(){
-		string[] _cardsValue = sever.GetRoundOneCards();
+		string[] _cardsValue = sever.GetRoundFourCards();
 		//翻第七張牌
 		pokerCards [6].SetData (_cardsValue [0]);
 		pokerCards [6].Turn ();
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 
 		//翻第二張牌
 		pokerCards [1].Turn ();
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 
 		//翻第四張牌
 		pokerCards [3].Turn ();
-		yield return new WaitForSeconds (0.3f);
+		yield return new WaitForSeconds (SendCardTime);
 	}
 }
