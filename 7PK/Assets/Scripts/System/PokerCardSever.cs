@@ -205,26 +205,144 @@ public class PokerCardSever : MonoBehaviour {
 		
 	private bool IsRoyalFlush(){
 		ClearSuitPokerCards ();
+		for (int i = 0; i < 4; i++) {
+			int j = 9;
+			int _tempJokerCount = suit_JokerCount;
+			int _comboCount = 0;
+
+			for (int k = 0; k < 5; k++) {
+				int _number = (j + k == 13) ? 0 : j + k;
+				if (suit_cards[i,_number] > 0) {
+					_comboCount++;
+				} else if (_tempJokerCount > 0) {
+					_tempJokerCount--;
+					_comboCount++;
+				} 
+	
+				if (k == 4 && _comboCount >= 5) {
+					//儲存卡片 用來知道是哪幾張牌是最後牌型
+					string[] _cards = SearchSTRFlushCards ((ColorType)i,j + 1);
+					SaveSuitPokerCards (_cards);
+					SaveJokerCardsToSuitPokerCards ();
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 
 	private bool IsFiveKind(){
 		ClearSuitPokerCards ();
+
+		for (int i = 13; i >0; i--) {
+			int _number = i == 13 ? 0 : i;
+			if (suit_Numbers [_number] +suit_JokerCount >= 5) {
+				//儲存卡片 用來知道是哪幾張牌是最後牌型
+				string[] _cards = SearchPairCards (_number+1);
+				SaveSuitPokerCards (_cards);
+				SaveJokerCardsToSuitPokerCards ();
+				return true;
+			}
+		}
 		return false;
 	}
 
 	private bool IsSTRFlush(){
 		ClearSuitPokerCards ();
+		for (int i = 0; i < 4; i++) {
+			for (int j = 9; j >= 0; j--) {
+				int _tempJokerCount = suit_JokerCount;
+				int _comboCount = 0;
+
+				for (int k = 0; k < 5; k++) {
+					int _number = (j + k == 13) ? 0 : j + k;
+					if (suit_cards[i,_number] > 0) {
+						_comboCount++;
+					} else if (_tempJokerCount > 0) {
+						_tempJokerCount--;
+						_comboCount++;
+					} 
+
+					if (k == 4 && _comboCount >= 5) {
+						//儲存卡片 用來知道是哪幾張牌是最後牌型
+						string[] _cards = SearchSTRFlushCards ((ColorType)i,j + 1);
+						SaveSuitPokerCards (_cards);
+						SaveJokerCardsToSuitPokerCards ();
+						return true;
+					}
+				}
+			}
+		}
 		return false;
+	}
+
+	private string[] SearchSTRFlushCards(ColorType p_color, int p_startCardNumber){
+		List<string> _cards = new List<string> ();
+		int[] _fiveCardNumber = new int[5];
+
+		if (p_startCardNumber == 1) {
+			_fiveCardNumber [0] = 1;
+			for (int i = 4; i > 0; i--) {
+				_fiveCardNumber [4 - i + 1] = (i + p_startCardNumber) == 14 ? 1 : (i + p_startCardNumber);
+			}
+		} else {
+			for (int i = 4; i >= 0; i--) {
+				_fiveCardNumber [4 - i] = (i + p_startCardNumber) == 14 ? 1 : (i + p_startCardNumber);
+			}
+		}
+
+		for (int i = 0; i < _fiveCardNumber.Length; i++) {
+			for (int j = 0; j < haveSevenPokerCards.Count; j++) {
+				string _cardvalue = ((ColorType)p_color).ToString() + "_" + _fiveCardNumber[i]; 
+					if (haveSevenPokerCards[j] == _cardvalue) {
+					_cards.Add (haveSevenPokerCards [j]);
+					break;
+				}
+			}
+		}
+
+		return _cards.ToArray ();
 	}
 
 	private bool IsFourKind(){
 		ClearSuitPokerCards ();
+
+		for (int i = 13; i >0; i--) {
+			int _number = i == 13 ? 0 : i;
+			if (suit_Numbers [_number] +suit_JokerCount >= 4) {
+				//儲存卡片 用來知道是哪幾張牌是最後牌型
+				string[] _cards = SearchPairCards (_number+1);
+				SaveSuitPokerCards (_cards);
+				SaveJokerCardsToSuitPokerCards ();
+				return true;
+			}
+		}
 		return false;
 	}
 
 	private bool IsFullHourse(){
 		ClearSuitPokerCards ();
+
+		//因為不可能有2張鬼牌的 葫蘆牌型
+		//有鬼牌的葫蘆 鬼牌一定是當最大的那個對子湊成三條
+		for (int i = 13; i >0; i--) {
+			int _number = i == 13 ? 0 : i;
+
+			if (suit_Numbers [_number] + suit_JokerCount >= 3) {
+				for (int k = 13; k > 0; k--) {
+					int _number_II = k == 13 ? 0 : k;
+					if (suit_Numbers [_number_II] >= 2 && i != k) {
+						//儲存卡片 用來知道是哪幾張牌是最後牌型
+						string[] _cards = SearchPairCards (_number+1);
+						SaveSuitPokerCards (_cards);
+						string[] _cards_II = SearchPairCards (_number_II+1);
+						SaveSuitPokerCards (_cards_II);
+						SaveJokerCardsToSuitPokerCards ();
+						return true;
+					}
+				}
+			}
+		}
 		return false;
 	}
 
@@ -244,6 +362,16 @@ public class PokerCardSever : MonoBehaviour {
 
 	private string[] SearchColorCards(ColorType p_colorType){
 		List<string> _cards = new List<string> ();
+		for (int i = 0; i < haveSevenPokerCards.Count; i++) {
+			if (_cards.Count >= 5) {
+				break;
+			}
+
+			string[] _cardValue = Regex.Split (haveSevenPokerCards [i], "_");
+			if (_cardValue [0] == p_colorType.ToString ()) {
+				_cards.Add (haveSevenPokerCards [i]);
+			}
+		}
 		return _cards.ToArray();
 	}
 
@@ -346,6 +474,10 @@ public class PokerCardSever : MonoBehaviour {
 	private string[] SearchPairCards(int p_number){
 		List<string> _cards = new List<string> ();
 		for (int i = 0; i < haveSevenPokerCards.Count; i++) {
+			if (_cards.Count + suitPokerCards.Count >= 5) {
+				break;
+			}
+
 			string[] _value = Regex.Split (haveSevenPokerCards [i], "_");
 			if (int.Parse(_value [1]) == p_number) {
 				_cards.Add (haveSevenPokerCards [i]);
@@ -385,6 +517,10 @@ public class PokerCardSever : MonoBehaviour {
 
 	private void SaveJokerCardsToSuitPokerCards(){
 		for (int i = 0; i < haveSevenPokerCards.Count; i++) {
+			if (suitPokerCards.Count >= 5) {
+				break;
+			}
+
 			if (haveSevenPokerCards [i] == "JB_0") {
 				suitPokerCards.Add("JB_0");
 			}

@@ -9,5 +9,5 @@ public enum TipType{Logo, BetOrPass, GetScore};
 
 public enum StatusType {ReStart, OneRound, TwoRound, ThreeRound, FourRound, Win, Lose, Working};
 
-public enum ColorType{S,H,D,C};
+public enum ColorType{C,D,H,S};
 public class PublicEnum{}
