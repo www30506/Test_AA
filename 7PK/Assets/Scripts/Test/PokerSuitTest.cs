@@ -14,7 +14,7 @@ public class PokerSuitTest : MonoBehaviour {
 			print ("【單元測試 - 牌型比較】");
 			TestTwoPair ();
 			TestThreeKind ();
-			TestStraight ();
+//			TestStraight ();
 //			TestFlush ();
 //			TestFullHourse ();
 //			TestFourKind ();
