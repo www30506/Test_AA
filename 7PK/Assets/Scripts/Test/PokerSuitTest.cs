@@ -15,57 +15,103 @@ public class PokerSuitTest : MonoBehaviour {
 			TestTwoPair ();
 			TestThreeKind ();
 			TestStraight ();
-			TestFlush ();
-			TestFullHourse ();
-			TestFourKind ();
-			TestSTRFlush ();
-			TestFiveKind ();
-			TestRoyalFlush ();
+//			TestFlush ();
+//			TestFullHourse ();
+//			TestFourKind ();
+//			TestSTRFlush ();
+//			TestFiveKind ();
+//			TestRoyalFlush ();
 		}	
 	}
 
 	private void TestTwoPair(){
-		string[] _cards = 
-			{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
-			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
+		string[] _cards = {
+			"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
+			"C_10,H_1,C_2,S_5,H_9,S_9,H_10"
 		};
 
+		string[] _fiveCards = {
+			"H_1,C_1,S_9,H_9,H_11",
+			"H_10,C_10,S_9,H_9,H_1"
+		};
 		for (int i = 0; i < _cards.Length; i++) {
 			if (sever.TestSetPokerSuit (_cards[i]) != SuitType.TwoPair) {
-				Debug.LogError ("【兩對】判斷錯誤 第" +(i+1) + "組");
+				Debug.LogError ("【兩對】判斷錯誤 第" +(i+1) + "組\n"+
+					"算成 " + sever.TestSetPokerSuit (_cards [i]));
+			}
+			if (sever.GetSuitFivePokerCards () != _fiveCards [i]) {
+				Debug.LogError ("【兩對】亮的五張牌不正確\n"+
+				"應該顯示 : " + _fiveCards [i] +"\n"+ 
+				"顯示為 : " + sever.GetSuitFivePokerCards ());
 			}
 		}
 	}
 
 	private void TestThreeKind(){
-		string[] _cards = 
-		{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
-			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
+		string[] _cards = {
+			"C_1,H_1,S_1,S_5,H_7,S_9,H_11",
+			"C_1,H_1,JB_0,S_5,H_9,S_3,H_10",
+			"C_1,H_1,JR_0,S_5,H_3,S_9,H_10",
+			"C_1,S_5,JR_0,JB_0,H_8,D_4,H_10"
+		};
+
+		string[] _fiveCards = {
+			"S_1,H_1,C_1,H_11,S_9",
+			"H_1,C_1,JB_0,H_10,H_9",
+			"H_1,C_1,JR_0,H_10,S_9",
+			"C_1,JB_0,JR_0,H_10,H_8"
 		};
 
 		for (int i = 0; i < _cards.Length; i++) {
 			if (sever.TestSetPokerSuit (_cards[i]) != SuitType.ThreeKind) {
-				Debug.LogError ("【三條】判斷錯誤 第" +(i+1) + "組");
+				Debug.LogError ("【三條】判斷錯誤 第" +(i+1) + "組  \n" + 
+					"算成 " + sever.TestSetPokerSuit (_cards [i]));
+			}
+			if (sever.GetSuitFivePokerCards () != _fiveCards [i]) {
+				Debug.LogError ("【三條】亮的五張牌不正確 \n" + 
+					"應該顯示 : " + _fiveCards [i] + "\n"+
+					"顯示為 : " + sever.GetSuitFivePokerCards ());
 			}
 		}
 	}
 
 	private void TestStraight(){
-		string[] _cards = 
-		{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
-			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
+		string[] _cards = {
+			"C_1,H_2,C_3,S_5,H_4,S_9,H_11",
+			"C_10,H_1,C_11,S_12,H_13,S_7,H_5",
+			"JB_0,H_1,C_11,S_12,H_13,S_7,H_5",
+			"C_10,H_1,JR_0,S_12,H_13,S_7,H_5",
+			"C_10,JR_0,C_11,S_12,H_13,S_7,H_5",
+			"C_11,H_5,S_12,H_13,JB_0,D_6,JR_0",
+			"C_10,D_4,S_1,JB_0,H_13,D_8,JR_0",
+		};
+
+		string[] _fiveCards = {
+			"C_1,H_2,C_3,H_4,S_5",
+			"H_1,C_10,C_11,S_12,H_13",
+			"H_1,C_11,S_12,H_13,JB_0",
+			"H_1,C_10,S_12,H_13,JR_0",
+			"C_10,C_11,S_12,H_13,JR_0",
+			"C_11,S_12,H_13,JB_0,JR_0",
+			"C_10,S_1,H_13,JB_0,JR_0",
 		};
 
 		for (int i = 0; i < _cards.Length; i++) {
 			if (sever.TestSetPokerSuit (_cards[i]) != SuitType.Straight) {
 				Debug.LogError ("【順子】判斷錯誤 第" +(i+1) + "組");
 			}
+
+			if (sever.GetSuitFivePokerCards () != _fiveCards [i]) {
+				Debug.LogError ("【三條】亮的五張牌不正確 \n" + 
+					"應該顯示 : " + _fiveCards [i] + "\n"+
+					"顯示為 : " + sever.GetSuitFivePokerCards ());
+			}
 		}
 	}
 
 	private void TestFlush(){
-		string[] _cards = 
-		{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
+		string[] _cards = {
+			"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
 			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
 		};
 
@@ -77,8 +123,8 @@ public class PokerSuitTest : MonoBehaviour {
 	}
 
 	private void TestFullHourse(){
-		string[] _cards = 
-		{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
+		string[] _cards = {
+			"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
 			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
 		};
 
@@ -90,8 +136,8 @@ public class PokerSuitTest : MonoBehaviour {
 	}
 
 	private  void TestFourKind(){
-		string[] _cards = 
-		{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
+		string[] _cards = {
+			"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
 			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
 		};
 
@@ -103,8 +149,8 @@ public class PokerSuitTest : MonoBehaviour {
 	}
 
 	private void TestSTRFlush(){
-		string[] _cards = 
-		{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
+		string[] _cards = {
+			"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
 			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
 		};
 
@@ -116,8 +162,8 @@ public class PokerSuitTest : MonoBehaviour {
 	}
 
 	private void TestFiveKind(){
-		string[] _cards = 
-		{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
+		string[] _cards = {
+			"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
 			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
 		};
 
@@ -129,8 +175,8 @@ public class PokerSuitTest : MonoBehaviour {
 	}
 
 	private void TestRoyalFlush(){
-		string[] _cards = 
-		{"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
+		string[] _cards = {
+			"C_1,H_1,C_2,S_5,H_9,S_9,H_11",
 			"C_10,H_1,C_2,S_5,H_9,S_9,H_10",
 		};
 
