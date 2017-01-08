@@ -19,6 +19,16 @@ public class MainView : MonoBehaviour {
 		
 	}
 
+	public void ReSetBounsColor(){
+		print ("UI-重設獎勵顏色");
+
+		for (int i = 0; i < bounds.Length; i++) {
+			Color _color = i % 2 == 0 ? new Color32 (230, 255, 0, 255) : new Color32 (0, 255, 23, 255);
+			bounds [i].color = _color;
+			boundsValue [i].color = _color;
+		}
+	}
+
 	public void ReSetBounsText(){
 		print("UI-重設獎勵倍率");
 
@@ -58,5 +68,14 @@ public class MainView : MonoBehaviour {
 		for (int i = 0; i < roundBetsText.Length; i++) {
 			roundBetsText [i].text = p_roundBets [i].ToString();
 		}
+	}
+
+	public void OpenWinBoundsEffect(SuitType p_suitTypr){
+		print ("UI-勝利獎項特效");
+		bounds [(int)p_suitTypr].color = Color.red;
+		boundsValue [(int)p_suitTypr].color = Color.red;
+	}
+
+	public void CloseWinBounsEffect(){
 	}
 }

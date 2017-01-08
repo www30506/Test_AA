@@ -35,5 +35,14 @@ public class PokerCard : MonoBehaviour {
 
 	public void Reset(){
 		thisRawImage.enabled = false;
+		thisRawImage.color = Color.white;
+	}
+
+	public void ToDark(){
+		thisRawImage.color = new Color32 (80, 80, 80, 255);
+	}
+
+	public string GetValue(){
+		return value;
 	}
 }

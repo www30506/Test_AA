@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Text.RegularExpressions;
 
 public class MainController : MonoBehaviour {
 	[SerializeField]private StatusType status =  StatusType.ReStart;
@@ -12,6 +13,7 @@ public class MainController : MonoBehaviour {
 	private ZoneData zoneData;
 	[SerializeField]private UserData userData;
 	[SerializeField]private bool thisGameLockBet = false;
+	[SerializeField]private SuitType endSuitType;
 
 	private float SendCardTime = 0.15f;
 
@@ -139,18 +141,41 @@ public class MainController : MonoBehaviour {
 	}
 
 	IEnumerator EnddingGame(){
-		SuitType _suitType = sever.GetSuitType ();
-
+		 endSuitType = sever.GetSuitType ();
+		print ("結束牌型 :　" +endSuitType);
 		//同花大順是0 高牌是10
-		if ((int)_suitType < (int)SuitType.Pair) {
+		if ((int)endSuitType < (int)SuitType.Pair) {
 			status = StatusType.Win;
+			OtherPokerCardsToDark ();
+			mainView.OpenWinBoundsEffect (endSuitType);
 		} 
 		else {
 			status = StatusType.Lose;
+			AllPokerCardsToDark ();
 			yield return new WaitForSeconds (1.0f);
-			#if !Test
+
 			ResetGame ();
-			#endif
+		}
+	}
+
+	private void AllPokerCardsToDark(){
+		for (int i = 0; i < pokerCards.Length; i++) {
+			pokerCards [i].ToDark ();
+		}
+	}
+
+	private void OtherPokerCardsToDark(){
+		string[] _fiveSuitCards = Regex.Split (sever.GetSuitFivePokerCards (), ",");
+
+		for (int i = 0; i < pokerCards.Length; i++) {
+			for (int j = 0; j < _fiveSuitCards.Length; j++) {
+				if (pokerCards [i].GetValue () == _fiveSuitCards [j]) {
+					break;
+				}
+				if (j == _fiveSuitCards.Length - 1) {
+					pokerCards [i].ToDark ();
+				}
+			}
 		}
 	}
 
@@ -197,6 +222,7 @@ public class MainController : MonoBehaviour {
 		ResetUserDataRoundBet ();
 		mainView.UpdateRoundBets (userData.roundsBets);
 		mainView.ReSetBounsText ();
+		mainView.ReSetBounsColor ();
 		thisGameLockBet = false;
 		status = StatusType.ReStart;
 	}
