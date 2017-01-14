@@ -8,7 +8,6 @@ public class MainController : MonoBehaviour {
 	[SerializeField]private StatusType status =  StatusType.ReStart;
 	[SerializeField]private MainView mainView;
 	[SerializeField]private PokerCardSever sever;
-	[SerializeField]private int totalBet;
 	[SerializeField]private PokerCard[] pokerCards;
 	private ZoneData zoneData;
 	[SerializeField]private UserData userData;
@@ -45,6 +44,10 @@ public class MainController : MonoBehaviour {
 
 		if(Input.GetKeyUp (KeyCode.Z)) {
 			OnGetMoneyBtn ();
+		}
+
+		if (Input.GetKeyUp (KeyCode.X)) {
+			OnUpScoreBtn ();
 		}
 
 		if(Input.GetKeyUp (KeyCode.B)) {
@@ -91,9 +94,30 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void OnUpScoreBtn(){
-		if (status == StatusType.Working) return;
+		if (status == StatusType.Working || CanUpScore () == false) {
+			print("上分指令無效");
+			return;
+		}
 
 		print ("----\t上分\t----");
+		StartCoroutine (IE_UpScore ());
+	}
+
+	IEnumerator IE_UpScore(){
+		status = StatusType.Working;
+		while(userData.nowMoney >= GlobalData.UpScoreValueByOnce){
+			userData.nowMoney -= GlobalData.UpScoreValueByOnce;
+
+			userData.bankMoney += GlobalData.UpScoreValueByOnce;
+			mainView.UpdateNowMoney (userData.nowMoney);
+			mainView.UpdateBankMoney (userData.bankMoney);
+			yield return new WaitForSeconds(GlobalData.UpScoreIntervalsTime);
+		}
+
+		status = StatusType.ReStart;
+	}
+	private bool CanUpScore(){
+		return userData.nowMoney >= zoneData.upScore;
 	}
 
 	public void OnBetBtn(){
@@ -209,9 +233,30 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void OnGetMoneyBtn(){
-		if (status == StatusType.Working) return;
+		if (status == StatusType.Working || status != StatusType.Win) return;
 
-		print ("----\t取得金錢\t----");
+		print ("----\t取得金錢\t----") ;
+		userData.winMoney = zoneData.magnification[(int)endSuitType] * userData.totalBet;
+		StartCoroutine (IE_GetMoney ());
+	}
+
+
+	IEnumerator IE_GetMoney(){
+		status = StatusType.Working;
+		while (userData.winMoney > 0) {
+			userData.winMoney -= GlobalData.GetMoneySpeed;
+			int _offset = 0;
+			if (userData.winMoney < 0) {
+				_offset = 0 - userData.winMoney;
+			}
+
+			userData.nowMoney += GlobalData.GetMoneySpeed - _offset;
+			mainView.SetBounsValue (endSuitType, userData.winMoney);
+			mainView.UpdateNowMoney (userData.nowMoney);
+			yield return null;
+		}
+
+		ResetGame ();
 	}
 
 	private void ResetGame(){

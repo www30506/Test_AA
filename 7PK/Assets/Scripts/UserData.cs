@@ -20,4 +20,5 @@ public class UserData  {
 
 	public int[] roundsBets = new int [4]; //每輪押注多少
 
+	public int winMoney =0; //贏的獎金
 }

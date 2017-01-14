@@ -86,7 +86,6 @@ public class PokerCardSever : MonoBehaviour {
 	}
 
 	private string GetOneCard(){
-		string _cardValue;
 		int _random = Random.Range (0, pokerDeck.Count);
 		return pokerDeck [_random];
 	}
@@ -123,9 +122,6 @@ public class PokerCardSever : MonoBehaviour {
 		SortPokerSuit ();
 		SetJudgmentSuitData (haveSevenPokerCards);
 
-//		print ("牌 : " + pokerSuit [0] + "," + pokerSuit [1] + "," + pokerSuit [2] + "," 
-//			+ pokerSuit [3] + ","+ pokerSuit [4] + "," + pokerSuit [5] + "," + pokerSuit [6]);
-
 		if (IsRoyalFlush ()) {
 			_suitType = SuitType.RoyalFlush;
 		} else if (IsFiveKind ()) {
@@ -147,7 +143,6 @@ public class PokerCardSever : MonoBehaviour {
 		} else {
 			_suitType = SuitType.Pair;
 		}
-//		print ("牌型 : " + _suitType.ToString());
 		return _suitType;
 	}
 		

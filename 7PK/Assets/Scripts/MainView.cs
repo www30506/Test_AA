@@ -78,4 +78,8 @@ public class MainView : MonoBehaviour {
 
 	public void CloseWinBounsEffect(){
 	}
+
+	public void SetBounsValue(SuitType p_suitType, int p_value){
+		boundsValue [(int)p_suitType].text = p_value.ToString();
+	}
 }
