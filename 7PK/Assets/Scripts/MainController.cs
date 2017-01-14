@@ -246,8 +246,9 @@ public class MainController : MonoBehaviour {
 		while (userData.winMoney > 0) {
 			userData.winMoney -= GlobalData.GetMoneySpeed;
 			int _offset = 0;
-			if (userData.winMoney < 0) {
+			if (userData.winMoney - GlobalData.GetMoneySpeed < 0) {
 				_offset = 0 - userData.winMoney;
+				userData.winMoney = 0;
 			}
 
 			userData.nowMoney += GlobalData.GetMoneySpeed - _offset;
