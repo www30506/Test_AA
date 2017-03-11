@@ -204,7 +204,7 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void OnOpenAllCardsBtn(){
-		if (status == StatusType.Working || isBet () == false) {
+		if (status == StatusType.Working || isBet () == false || status == StatusType.Win) {
 			print ("指令無效");
 			return;
 		}
