@@ -50,10 +50,6 @@ public class MainController : MonoBehaviour {
 			OnUpScoreBtn ();
 		}
 
-		if(Input.GetKeyUp (KeyCode.B)) {
-			ResetGame ();
-		}
-
 		#if UNITY_EDITOR
 		if(Input.GetKeyUp(KeyCode.P)){
 			print("User BankMoney : " + userData.bankMoney);
